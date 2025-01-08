@@ -26,13 +26,13 @@ class GameView : SurfaceView, Runnable {
 
     lateinit var surfaceHolder: SurfaceHolder
     lateinit var canvas : Canvas
+    lateinit var mediaPlayer: MediaPlayer
 
     lateinit var song : List<SongNote>
     var rhythmBalls = arrayListOf<Ball>()
     var points = 0
 
     lateinit var gameContext : Context
-    lateinit var mediaPlayer: MediaPlayer
 
     var onGameOver : () -> Unit = {}
 
@@ -46,9 +46,6 @@ class GameView : SurfaceView, Runnable {
         mediaPlayer = MediaPlayer.create(context, R.raw.zelda_gaming)
 
         mediaPlayer.start()
-
-        mediaPlayer.stop()
-
     }
 
     constructor(context: Context?, width: Int, height: Int) : super(context) {
@@ -92,13 +89,14 @@ class GameView : SurfaceView, Runnable {
 
                 rhythmBalls.add(Ball(gameContext, it.x?:0, it.y?:0, it.decaySpeed?:0))
                 Log.d("game", "Created ball at: x = " + it.x + " y = " + it.y)
-
-
+                if (it.timestamp == secondsToFrames(10f)) {
+                    mediaPlayer.stop()
+                    mediaPlayer.release()
+                }
             }
         }
 
         frameCounter++
-        Log.d("game", mediaPlayer.isPlaying.toString())
 
     }
 
@@ -111,6 +109,9 @@ class GameView : SurfaceView, Runnable {
             rhythmBalls.forEach {
                 it.draw(canvas)
             }
+            rhythmBalls.forEach {
+                it.draw(canvas)
+            }
 
             surfaceHolder.unlockCanvasAndPost(canvas)
         }
@@ -119,7 +120,7 @@ class GameView : SurfaceView, Runnable {
     var callGameOverOnce = false
     fun frames() {
         Thread.sleep(17)
-        if (frameCounter == secondsToFrames(5f)) {
+        /*if (frameCounter == secondsToFrames(10f)) {
             playing = false
             Handler(Looper.getMainLooper()).post {
                 if (!callGameOverOnce) {
@@ -128,7 +129,7 @@ class GameView : SurfaceView, Runnable {
                 }
                 gameThread?.join()
             }
-        }
+        }*/
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

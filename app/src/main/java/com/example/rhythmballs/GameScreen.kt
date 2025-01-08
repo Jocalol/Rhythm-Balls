@@ -26,9 +26,9 @@ fun GameScreenView(
             height = screenHeightPx.toInt())
         }
     )  {
-            it.resume()
-            it.onGameOver = {
-                onGameOver()
-            }
+        it.resume()
+        it.onGameOver = {
+            onGameOver()
         }
+    }
 }

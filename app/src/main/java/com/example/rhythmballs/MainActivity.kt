@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "main_menu") {
                         composable("in_game") {
                             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                            GameScreenView() {
+                            GameScreenView {
                                 navController.navigate("score")
                             }
                         }

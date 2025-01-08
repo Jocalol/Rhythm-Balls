@@ -19,6 +19,7 @@ import com.example.rhythmballs.R
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import kotlin.system.exitProcess
 
 @Composable
 fun MenuScreen(navController: NavController = rememberNavController()) {
@@ -79,7 +80,7 @@ fun MenuScreen(navController: NavController = rememberNavController()) {
 
             // Botão "Sair"
             Button(
-                onClick = {}, // Ação ao clicar no botão
+                onClick = { exitProcess(-1) }, // Ação ao clicar no botão
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
