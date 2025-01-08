@@ -13,8 +13,11 @@ class Ball {
     var y = 0
     var lifetime = 0
     var decayProgress = 17 * 5
+    var failed = false
 
     var bitmap : Bitmap
+    var successBitmap : Bitmap
+    var failureBitmap : Bitmap
 
     var clickable = true
 
@@ -23,10 +26,20 @@ class Ball {
     var paint = Paint()
 
 
-    constructor(context: Context, width: Int, height: Int) {
+    constructor(context: Context, width: Int, height: Int, decayTime : Int) {
         bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.inicio_bola_a)
         bitmap = Bitmap.createScaledBitmap(bitmap, 250, 250, false)
 
+        successBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.bola_fim_a)
+        successBitmap = Bitmap.createScaledBitmap(successBitmap, 250, 250, false)
+
+        failureBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.bolo_errada_a)
+        failureBitmap = Bitmap.createScaledBitmap(failureBitmap, 250, 250, false)
+
+        x = width
+        y = height
+
+        decayProgress = decayTime
         lifetime = decayProgress
 
         detectCollision = Rect(x,y, bitmap.width, bitmap.height)
@@ -34,33 +47,38 @@ class Ball {
 
     fun click() {
         clickable = false
+        bitmap = successBitmap
+
     }
 
     fun update() {
-        if (clickable) {
+        if (decayProgress > 0) {
+            decayProgress--
+        } else {
+            decayProgress = 0
 
-            if (decayProgress > 0) {
-                decayProgress--
+            if (clickable) {
+                failed = true
+            }
+
+            y += 3
+            if (paint.alpha > 35) {
+                paint.alpha -= 35
             } else {
-                decayProgress = 0
-                y += 3
-                if (paint.alpha > 35) {
-                    paint.setAlpha(paint.alpha - 35)
-                } else {
-                    paint.setAlpha(0)
-                    clickable = false
-                }
+                paint.alpha = 0
+                clickable = false
             }
         }
+
 
         detectCollision.left = x
         detectCollision.top = y
         detectCollision.right = x + bitmap.width
         detectCollision.bottom = y + bitmap.height
 
-        Log.d("game", lifetime.toString())
     }
     fun draw(canvas: Canvas) {
+        if (failed) { bitmap = failureBitmap }
         canvas.drawBitmap(bitmap, x.toFloat(), y.toFloat(), paint)
     }
 }

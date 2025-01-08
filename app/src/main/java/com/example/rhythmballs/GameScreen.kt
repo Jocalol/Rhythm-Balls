@@ -3,9 +3,13 @@ package com.example.rhythmballs
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavController
 
 @Composable
-fun GameScreenView() {
+fun GameScreenView(
+    onGameOver : () -> Unit = {}
+) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
@@ -14,13 +18,17 @@ fun GameScreenView() {
     val screenWidthPx = screenWidth * density
     val screenHeightPx = screenHeight * density
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     AndroidView(factory = { context ->
         GameView(context = context,
             width = screenWidthPx.toInt(),
             height = screenHeightPx.toInt())
-        },
-        update = {
-            it.resume()
         }
-    )
+    )  {
+            it.resume()
+            it.onGameOver = {
+                onGameOver()
+            }
+        }
 }

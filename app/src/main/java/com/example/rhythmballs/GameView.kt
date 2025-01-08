@@ -1,32 +1,54 @@
 package com.example.rhythmballs
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.media.MediaPlayer
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import androidx.navigation.NavController
 
 class GameView : SurfaceView, Runnable {
 
     var playing = false
     var gameThread : Thread? = null
+    var musicThread: Thread? = null
+
+    var frameCounter : Int = 0
 
     lateinit var surfaceHolder: SurfaceHolder
     lateinit var canvas : Canvas
 
-    lateinit var ball : Ball
+    lateinit var song : List<SongNote>
+    var rhythmBalls = arrayListOf<Ball>()
+    var points = 0
 
-    lateinit var paint: Paint
+    lateinit var gameContext : Context
+    lateinit var mediaPlayer: MediaPlayer
+
+    var onGameOver : () -> Unit = {}
 
     private fun init(context: Context, width: Int, height: Int) {
         surfaceHolder = holder
-        paint = Paint()
 
-        ball = Ball(context, width, height)
+        gameContext = context
+
+        song = WriteSong()
+
+        mediaPlayer = MediaPlayer.create(context, R.raw.zelda_gaming)
+
+        mediaPlayer.start()
+
+        mediaPlayer.stop()
+
     }
 
     constructor(context: Context?, width: Int, height: Int) : super(context) {
@@ -60,7 +82,24 @@ class GameView : SurfaceView, Runnable {
     }
 
     fun update() {
-        ball.update()
+
+        rhythmBalls.forEach {
+            it.update()
+        }
+
+        song.forEach {
+            if (it.timestamp == frameCounter) {
+
+                rhythmBalls.add(Ball(gameContext, it.x?:0, it.y?:0, it.decaySpeed?:0))
+                Log.d("game", "Created ball at: x = " + it.x + " y = " + it.y)
+
+
+            }
+        }
+
+        frameCounter++
+        Log.d("game", mediaPlayer.isPlaying.toString())
+
     }
 
     fun draw() {
@@ -69,27 +108,43 @@ class GameView : SurfaceView, Runnable {
 
             canvas.drawColor(Color.BLACK)
 
-            ball.draw(canvas)
+            rhythmBalls.forEach {
+                it.draw(canvas)
+            }
 
             surfaceHolder.unlockCanvasAndPost(canvas)
         }
     }
 
+    var callGameOverOnce = false
     fun frames() {
         Thread.sleep(17)
+        if (frameCounter == secondsToFrames(5f)) {
+            playing = false
+            Handler(Looper.getMainLooper()).post {
+                if (!callGameOverOnce) {
+                    onGameOver()
+                    callGameOverOnce = true
+                }
+                gameThread?.join()
+            }
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
-        var touchX = event?.getX()!!.toInt();
-        var touchY = event?.getY()!!.toInt();
+        var touchX = event!!.x.toInt();
+        var touchY = event.y.toInt();
 
         var touchR = Rect(touchX, touchY, touchX, touchY)
 
-        when (event?.action) {
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                if (Rect.intersects(ball.detectCollision, touchR)) {
-                    ball.click()
+                rhythmBalls.forEach {
+                    if (Rect.intersects(it.detectCollision, touchR) and !it.failed) {
+                        it.click()
+                        points++
+                    }
                 }
             }
         }

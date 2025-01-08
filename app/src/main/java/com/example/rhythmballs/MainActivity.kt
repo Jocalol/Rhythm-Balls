@@ -24,17 +24,38 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
             RhythmBallsTheme {
+
+                var navController = rememberNavController()
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
-                    NavHost(navController = navController, startDestination = "in_game") {
+                    NavHost(navController = navController, startDestination = "main_menu") {
                         composable("in_game") {
-                            GameScreenView()
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                            GameScreenView() {
+                                navController.navigate("score")
+                            }
+                        }
+                        composable("main_menu") {
+                            MenuScreen(navController = navController)
+                        }
+                        composable("login") {
+                            LoginScreen(navController = navController, onLoginSuccess = {
+                                navController.navigate("main_menu")
+                            })
+                        }
+                        composable("register") {
+                            RegisterView(navController = navController, onRegisterSuccess = {
+                                navController.navigate("main_menu")
+                            })
+                        }
+                        composable("score") {
+                            ScoreView(34879)
                         }
                     }
                 }
