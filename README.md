@@ -1,6 +1,6 @@
 # RhythmBalls
 
-Projeto realizado no âmbito da UC DJPM
+Projeto realizado no âmbito da UC DJPM do curso Licenssiatura em Engenharia em Desenvolvimento de Jogos Digitais
 
 
 ## Membros 
@@ -33,23 +33,19 @@ RgisterView.kt e LoginView.kt são os 2 ficheiros responsáveis por toda a UI de
 ### MenuScreen.kt
 Neste ficheiro é onde é armazenado a criação do menu principal e todo o tipo de interações possíveis a partir deste. 
 
-### Input.cs
-Como o próprio nome indica, esta classe é responsável pelo armazenameto das propriedades responsáveis pelo input do utilizador. Como já mencionado anteriormente, existe a possibilidade de utilizar Teclado e Comando como input.
+### SongNote.kt e WriteSong.kt
+SongNote.kt tem como propósito guardar as propriedades das timestamps. WriteSong.kt através das propriedades guardadas em SongNote.kt cria um array com várias "*Notes*" de a  forma a guardar as várias *timestamps* da música.
 
-### Map.cs
-Classe responsável pela geração do mapa, certos objetos do mapa são gerados de forma aleatória. Após gerar os objetos de forma aleatória, é criado o fundo do mapa.
+### Ball.kt
+Classe onde são guardadas todas as propriedades do circulo que o jogador irá interagir..
 
-### Sprite.cs
-Classe responsável pelo desenho das texturas dos objetos na tela.
+### GameView.kt
+Este ficheiro é responsável pelo processamento do jogo.
 
-### Player.cs e Player2.cs
-Classes herdeiras de **Sprite.cs** responsáveis por colocar o Player no mapa, gere também as animações deste, bem como o próprio ataque acompanhado do som.
 
->[!Note]
-> Estas classes responsáveis por ambos os players partilharam bastantes semelhanças, pelo que uma poderia ser herdeira da outra ou então encontrar-se as propriedades no interior da mesma classe.
 
 # Considerações Finais
-Apesar de o projeto encontra-se numa fase bastante primitiva, faltando várias implementações, como: Hitboxes, Menus e UI; trata-se de um projeto bastante interessante que poderá ser continuado o desenvolvimento num futuro muito próximo.
+O jogo ainda pode ser aprimorado visto que ainda faltam algumas implementações básicas, como uma forma de guardar e mostrar "Scores". Foi tentada uma implementação deste mesmo sistema, no entanto nunca foi deixado funcional derivado a problemas com a thread principal do jogo.
 
 
 
